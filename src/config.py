@@ -23,3 +23,5 @@ EMBEDDING_MODEL = "gemini-embedding-001"
 THE_BATCH_BASE_URL = "https://www.deeplearning.ai/the-batch/"
 CHUNK_SIZE = 800
 CHUNK_OVERLAP = 150
+
+S3_BUCKET_NAME = os.getenv("S3_BUCKET_NAME")

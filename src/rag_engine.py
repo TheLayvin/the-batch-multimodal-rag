@@ -16,7 +16,7 @@ Rules:
 5. Keep the answer well-structured, clear, and concise."""
 
 def _encode_image_base64(rel_path: str) -> str | None:
-    full_path = BASE_DIR / rel_path
+    full_path = BASE_DIR / rel_path.replace("\\", "/")
     if not full_path.exists():
         return None
     try:

@@ -80,7 +80,7 @@ if search_clicked and query.strip():
         st.subheader("Retrieved Media")
         if result["retrieved_images"]:
             for img_hit in result["retrieved_images"]:
-                rel_path = img_hit["metadata"].get("image_path", "")
+                rel_path = img_hit["metadata"].get("image_path", "").replace("\\", "/")
                 full_path = BASE_DIR / rel_path
                 if full_path.exists():
                     st.image(

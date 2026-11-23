@@ -130,3 +130,22 @@ streamlit run app.py
 ```bash
 python -m src.evaluator
 ```
+
+## Cloud Architecture & AWS Deployment
+
+To keep the Git repository and Docker image stateless and lightweight (zero binary data or secrets in Git/ECR), this project separates code from data using AWS managed services:
+
+* **Source Control (GitHub):** Pure application code (`src/`, `app.py`, `Dockerfile`), excluding `.env`, `data/`, and `chroma_db/`.
+* **Data & Vector Index Storage (Amazon S3):** Pre-built `chroma_db/` and scraped `data/images/` are synced to a private S3 bucket via `src/sync_s3.py`.
+* **Container Registry (Amazon ECR):** Lightweight Python 3.12 Docker image built via multi-layer caching.
+* **Compute & Security (AWS EC2 + IAM Role):** Hosted on Ubuntu EC2 (`t3.micro`) using an **IAM Instance Profile** (`EC2RagS3EcrRole`) for passwordless authentication to S3 and ECR. On container startup, `src/sync_s3.py --download` pulls the index from S3 before launching Streamlit on port `8501`.
+
+### Quick Docker & AWS Sync Commands
+```bash
+# Upload local data/ and chroma_db/ to S3 (requires AWS CLI & S3_BUCKET_NAME in .env)
+python -m src.sync_s3 --upload
+
+# Build and run locally with Docker
+docker build -t the-batch-rag .
+docker run -p 8501:8501 --env-file .env the-batch-rag
+```
